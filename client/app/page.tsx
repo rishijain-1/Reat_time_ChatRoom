@@ -1,4 +1,3 @@
-import { CurrentUser } from "@/components/CurrentUser";
 import { Main } from "@/components/Main";
 
 export default function Home() {
