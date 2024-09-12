@@ -1,8 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
-import { CurrentUser } from './CurrentUser';
-
 const socket = io("https://reat-time-chatroom.onrender.com");
 
 export const Main = () => {
