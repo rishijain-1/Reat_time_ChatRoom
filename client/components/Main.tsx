@@ -18,8 +18,8 @@ export const Main = () => {
 
     const sendMessage = () => {
         if (message !== "" && userName !== "") {
-            socket.emit("send_message", { roomId: room, message, userName }); // Correct object format
-            setMessage("");  // Clear the input field after sending
+            socket.emit("send_message", { roomId: room, message, userName });
+            setMessage("");  
         }
     };
 
@@ -27,12 +27,24 @@ export const Main = () => {
         socket.on("receive_message", (data) => {
             setReceivedMessages((prevMessages) => [...prevMessages, { user: data.userName, message: data.message }]);
         });
+
+        // Listen for the user join event
+        socket.on("user_joined", (data) => {
+            setReceivedMessages((prevMessages) => [...prevMessages, { user: "System", message: data.message }]);
+        });
+
+        socket.on("user_left", (data) => {
+            console.log("User left event triggered:", data.message);
+            setReceivedMessages((prevMessages) => [...prevMessages, { user: "System", message: data.message }]);
+        });
+
         return () => {
             socket.off("receive_message");
+            socket.off("user_joined");
+            socket.off("user_left");
         };
     }, []);
     
-
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
             <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
@@ -47,7 +59,6 @@ export const Main = () => {
                     />
                 </div>
 
-                {/* Room ID Input */}
                 <div className="mb-4">
                     <input
                         type="text"
@@ -64,7 +75,6 @@ export const Main = () => {
                     </button>
                 </div>
 
-                {/* Message Input */}
                 <div className="mb-4">
                     <input
                         type="text"
@@ -81,12 +91,11 @@ export const Main = () => {
                     </button>
                 </div>
 
-                {/* Display Received Messages */}
                 <h2 className="text-xl font-semibold text-gray-700 mb-4">Messages:</h2>
                 <div className="h-64 p-4 overflow-y-auto bg-gray-50 border border-gray-600 rounded-lg">
                     {receivedMessages.length > 0 ? (
                         receivedMessages.map((msg, index) => (
-                            <p key={index} className="p-2 mb-2 bg-gray-700 rounded-lg text-white">
+                            <p key={index} className={`p-2 mb-2 rounded-lg ${msg.user === "System" ? "bg-yellow-500" : "bg-gray-700"} text-white`}>
                                 <strong>{msg.user}:</strong> {msg.message}
                             </p>
                         ))
@@ -98,3 +107,4 @@ export const Main = () => {
         </div>
     );
 };
+
