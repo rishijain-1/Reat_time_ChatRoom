@@ -39,9 +39,7 @@ export const Main = () => {
         });
 
         return () => {
-            socket.off("receive_message");
-            socket.off("user_joined");
-            socket.off("user_left");
+            socket.disconnect();
         };
     }, []);
     
