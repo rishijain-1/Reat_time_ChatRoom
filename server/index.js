@@ -22,7 +22,10 @@ io.on("connection", (socket) => {
     console.log(`User connected: ${socket.id}`);
     socket.on("join_room", ({ room, userName }) => {  
         socket.join(room);
+        socket.data.userName = userName;
+        socket.data.room = room;
         console.log(`${userName} with ID: ${socket.id} joined room: ${room}`);
+        socket.to(room).emit("user_joined", { userName, message: `${userName} has joined the room` });
     });
 
     socket.on("send_message", ({ roomId, message,userName }) => {
@@ -31,7 +34,13 @@ io.on("connection", (socket) => {
     });
 
     socket.on("disconnect", () => {
-        console.log(`User disconnected: ${socket.id}`);
+        const { room, userName } = socket.data; 
+        
+        if (room && userName) {
+            socket.to(room).emit("user_left", { userName, message: `${userName} has left the room` });
+            console.log(`${userName} with ID: ${socket.id} has left room: ${room}`);
+        }
+        console.log(`User disconnected: ${socket.id},${userName} has left the room `);
     });
 });
 
