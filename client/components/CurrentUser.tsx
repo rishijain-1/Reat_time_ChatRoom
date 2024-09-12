@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 
 // Connect to the Socket.IO server
-const socket = io("https://reat-time-chatroom.onrender.com");
+const socket = io("http://localhost:3001");
 
 export const CurrentUser = () => {
     const [users, setUsers] = useState<string[]>([]);
@@ -11,10 +11,11 @@ export const CurrentUser = () => {
 
     useEffect(() => {
 
-        socket.on("current_users", (users: string[]) => {
-            setUsers(users);
-            setLoading(false); 
-        });
+      socket.on("current_users", (users: string[]) => {
+        console.log(users);
+        setUsers(users);
+         setLoading(false);
+    });
 
         return () => {
            

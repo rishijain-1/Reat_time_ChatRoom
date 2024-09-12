@@ -1,11 +1,13 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
+import { CurrentUser } from './CurrentUser';
 
-const socket = io("https://reat-time-chatroom.onrender.com");
+const socket = io("http://localhost:3001");
 
 export const Main = () => {
     const [userName, setUserName] = useState(""); 
+    const [users, setUsers] = useState<string[]>([])
     const [room, setRoom] = useState("");
     const [message, setMessage] = useState("");
     const [receivedMessages, setReceivedMessages] = useState<{ user: string; message: string }[]>([]);
@@ -22,6 +24,7 @@ export const Main = () => {
             setMessage("");  
         }
     };
+   
 
     useEffect(() => {
         socket.on("receive_message", (data) => {
@@ -32,9 +35,11 @@ export const Main = () => {
         socket.on("user_joined", (data) => {
             setReceivedMessages((prevMessages) => [...prevMessages, { user: "System", message: data.message }]);
         });
+        socket.on("current_users", (users: string[]) => {
+            setUsers(users);
+        });
 
         socket.on("user_left", (data) => {
-            console.log("User left event triggered:", data.message);
             setReceivedMessages((prevMessages) => [...prevMessages, { user: "System", message: data.message }]);
         });
 
@@ -42,6 +47,7 @@ export const Main = () => {
             socket.off("receive_message");
             socket.off("user_joined");
             socket.off("user_left");
+            socket.off("current_users");
         };
     }, []);
     
@@ -102,6 +108,22 @@ export const Main = () => {
                     ) : (
                         <p className="text-gray-500">No messages yet.</p>
                     )}
+                </div>
+                <div className="flex flex-col h-full p-4">
+                    <div className="overflow-auto flex-1">
+                        <div className="bg-gray-200 p-4 rounded-lg">
+                            <div className="text-lg text-black font-bold mb-2">Users in Room</div>
+                            {users.length > 0 ? (
+                                <ul>
+                                    {users.map((user) => (
+                                        <li key={user} className="p-2 text-black font-bold border-b">{user}</li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <div>No users in the room</div>
+                            )}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
