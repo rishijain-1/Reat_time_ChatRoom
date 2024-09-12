@@ -5,7 +5,7 @@ import { Server } from "socket.io";
 
 const app = express();
 app.use(cors());
-const port=process.env.PORT || 3000;
+const port=process.env.PORT;
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
 });
  
 io.on("connection", (socket) => {
-
+    console.log(`User connected: ${socket.id}`);
     socket.on("join_room", ({ room, userName }) => {  
         socket.join(room);
         socket.data.userName = userName;

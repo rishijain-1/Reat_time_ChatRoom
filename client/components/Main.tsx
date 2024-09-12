@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 
-const socket = io("https://reat-time-chat-room.vercel.app/");
+const socket = io("https://reat-time-chatroom.onrender.com");
 
 export const Main = () => {
     const [userName, setUserName] = useState(""); 
