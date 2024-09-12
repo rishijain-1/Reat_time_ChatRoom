@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { CurrentUser } from './CurrentUser';
 
-const socket = io("http://localhost:3001");
+const socket = io("https://reat-time-chatroom.onrender.com");
 
 export const Main = () => {
     const [userName, setUserName] = useState(""); 
